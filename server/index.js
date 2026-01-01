@@ -165,8 +165,9 @@ app.post('/api/verify', async (req, res) => {
 // SERVE FRONTEND (STATIC FILES)
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
-// CATCH-ALL ROUTE (MUST BE LAST)
-app.get('(.*)', (req, res) => {
+// CATCH-ALL FALLBACK (MUST BE LAST)
+// Serves the React frontend for any route not caught by the API
+app.use((req, res) => {
     res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
 });
 
