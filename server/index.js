@@ -166,7 +166,7 @@ app.post('/api/verify', async (req, res) => {
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
 // CATCH-ALL ROUTE (MUST BE LAST)
-app.get('*', (req, res) => {
+app.get('(.*)', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
 });
 
