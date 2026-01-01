@@ -122,25 +122,30 @@ app.post('/api/subscribe', async (req, res) => {
             </html>
         `;
 
-        console.log(`[SUBSCRIPTION] Email generated for ${normalizedEmail}. Handing off to SMTP...`);
+        console.log(`[SUBSCRIPTION] Email generated for ${normalizedEmail}. Using Brevo API...`);
 
-        // Use a Promise with a timeout to send the email
+        // Use Brevo REST API instead of SMTP to bypass cloud port blocking
         await Promise.race([
-            transporter.sendMail({
-                from: `"Parbat" <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
-                to: normalizedEmail,
+            axios.post('https://api.brevo.com/v3/smtp/email', {
+                sender: { name: "Parbat", email: process.env.FROM_EMAIL || process.env.SMTP_USER },
+                to: [{ email: normalizedEmail }],
                 subject: 'Verification Code - Parbat',
-                html: emailHtml
+                htmlContent: emailHtml
+            }, {
+                headers: {
+                    'api-key': process.env.SMTP_PASS, // Brevo uses the same password as the API key
+                    'Content-Type': 'application/json'
+                }
             }),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('SMTP timeout after 15s')), 15000))
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Brevo API timeout after 15s')), 15000))
         ]);
 
-        console.log(`[SUBSCRIPTION] Email successfully sent to ${normalizedEmail}`);
+        console.log(`[SUBSCRIPTION] Email successfully sent via API to ${normalizedEmail}`);
         res.status(200).json({ message: 'Verification code sent to your email.' });
     } catch (error) {
-        console.error('[PROCESS ERROR]:', error.message);
-        // If it's a timeout or SMTP error, the client should know
-        res.status(500).json({ error: error.message.includes('timeout') ? 'Email service timed out. Please try again.' : 'Server error. Please try again soon.' });
+        console.error('[PROCESS ERROR]:', error.response?.data || error.message);
+        const errorMsg = error.message.includes('timeout') ? 'Email service timed out.' : 'Failed to send verification email.';
+        res.status(500).json({ error: `${errorMsg} Please check your credentials.` });
     }
 });
 
