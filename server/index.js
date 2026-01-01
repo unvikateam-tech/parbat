@@ -122,17 +122,25 @@ app.post('/api/subscribe', async (req, res) => {
             </html>
         `;
 
-        await transporter.sendMail({
-            from: `"Parbat" <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
-            to: normalizedEmail,
-            subject: 'Verification Code - Parbat',
-            html: emailHtml
-        });
+        console.log(`[SUBSCRIPTION] Email generated for ${normalizedEmail}. Handing off to SMTP...`);
 
+        // Use a Promise with a timeout to send the email
+        await Promise.race([
+            transporter.sendMail({
+                from: `"Parbat" <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
+                to: normalizedEmail,
+                subject: 'Verification Code - Parbat',
+                html: emailHtml
+            }),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('SMTP timeout after 15s')), 15000))
+        ]);
+
+        console.log(`[SUBSCRIPTION] Email successfully sent to ${normalizedEmail}`);
         res.status(200).json({ message: 'Verification code sent to your email.' });
     } catch (error) {
-        console.error('[SERVER ERROR]:', error.message);
-        res.status(500).json({ error: 'Server error. Please try again later.' });
+        console.error('[PROCESS ERROR]:', error.message);
+        // If it's a timeout or SMTP error, the client should know
+        res.status(500).json({ error: error.message.includes('timeout') ? 'Email service timed out. Please try again.' : 'Server error. Please try again soon.' });
     }
 });
 
