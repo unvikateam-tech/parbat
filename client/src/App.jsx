@@ -119,7 +119,7 @@ function App() {
         <div className="app-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
 
             {/* Top Left Logo */}
-            <div style={{ position: 'absolute', top: '2rem', left: '2rem', zIndex: 10 }}>
+            <div className="logo-container">
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -147,7 +147,7 @@ function App() {
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -20 }}
                                 >
-                                    <h3 style={{ marginBottom: '2rem', fontSize: '1.5rem', fontWeight: 700, textAlign: 'left' }}>Join the cohort</h3>
+                                    <h3 style={{ marginBottom: '2rem', fontSize: '1.5rem', fontWeight: 700, textAlign: 'left' }}>Join the Journey</h3>
                                     <form onSubmit={handleSubscribe} className="input-group">
                                         <input
                                             type="email"

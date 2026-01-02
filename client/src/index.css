@@ -37,6 +37,13 @@ body {
     color: var(--accent-primary);
 }
 
+.logo-container {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    z-index: 10;
+}
+
 /* Hero Section */
 .hero-section {
     display: flex;
@@ -142,4 +149,34 @@ body {
     color: var(--accent-primary);
     margin-bottom: 2rem;
     display: block;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 480px) {
+    .logo-container {
+        top: 1.25rem;
+        left: 1.25rem;
+    }
+
+    .newsletter-card {
+        padding: 2rem 1.5rem;
+        width: 92%;
+        max-width: 360px;
+    }
+
+    .newsletter-input,
+    .btn-newsletter {
+        padding: 16px;
+        font-size: 0.95rem;
+    }
+
+    .mono-label {
+        margin-bottom: 1rem !important;
+        font-size: 0.65rem;
+    }
+
+    h3 {
+        font-size: 1.25rem !important;
+        margin-bottom: 1.25rem !important;
+    }
 }
