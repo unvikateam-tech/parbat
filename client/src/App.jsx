@@ -124,7 +124,7 @@ function App() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6 }}
-                    style={{ fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.05em', textTransform: 'uppercase' }}
+                    className="logo-text"
                 >
                     parbat<span className="text-accent">_</span>
                 </motion.div>

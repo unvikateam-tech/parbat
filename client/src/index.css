@@ -39,9 +39,16 @@ body {
 
 .logo-container {
     position: absolute;
-    top: 2rem;
+    top: 2.5rem;
     left: 2rem;
     z-index: 10;
+}
+
+.logo-text {
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
 }
 
 /* Hero Section */
@@ -154,14 +161,22 @@ body {
 /* Mobile Adjustments */
 @media (max-width: 480px) {
     .logo-container {
-        top: 1.25rem;
-        left: 1.25rem;
+        top: 3rem;
+        /* Pushed down further */
+        left: 1.5rem;
+    }
+
+    .logo-text {
+        font-size: 1.6rem;
+        /* Bigger logo in mobile */
     }
 
     .newsletter-card {
         padding: 2rem 1.5rem;
         width: 92%;
         max-width: 360px;
+        margin-top: 2rem;
+        /* Extra breathing room */
     }
 
     .newsletter-input,
