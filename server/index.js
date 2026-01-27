@@ -89,21 +89,14 @@ const initDB = async () => {
                 email TEXT UNIQUE NOT NULL, 
                 created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
-            CREATE TABLE IF NOT EXISTS pending_verifications (
+            -- Safely drop and recreate the pending table to resolve schema conflicts
+            DROP TABLE IF EXISTS pending_verifications;
+            CREATE TABLE pending_verifications (
                 email TEXT PRIMARY KEY, 
-                otp_hash TEXT DEFAULT '', 
+                otp_hash TEXT NOT NULL, 
                 expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
                 created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
-            DO $$ 
-            BEGIN 
-                IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='pending_verifications' AND column_name='otp_hash') THEN
-                    ALTER TABLE pending_verifications ADD COLUMN otp_hash TEXT;
-                END IF;
-                IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='pending_verifications' AND column_name='otp_code') THEN
-                    ALTER TABLE pending_verifications DROP COLUMN otp_code;
-                END IF;
-            END $$;
             CREATE INDEX IF NOT EXISTS idx_pending_expires ON pending_verifications(expires_at);
         `);
         console.log(`[SYSTEM] Core ${VERSION} active.`);
