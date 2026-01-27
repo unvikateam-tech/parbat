@@ -11,6 +11,10 @@ require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 const app = express();
 
+// --- 0. Proxy trust for Rate Limiting ---
+app.set('trust proxy', 1);
+
+
 // --- 1. Security Headers ---
 app.use(helmet({
     contentSecurityPolicy: {
@@ -87,10 +91,16 @@ const initDB = async () => {
             );
             CREATE TABLE IF NOT EXISTS pending_verifications (
                 email TEXT PRIMARY KEY, 
-                otp_hash TEXT NOT NULL, 
+                otp_hash TEXT DEFAULT '', 
                 expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
                 created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
+            DO $$ 
+            BEGIN 
+                IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='pending_verifications' AND column_name='otp_hash') THEN
+                    ALTER TABLE pending_verifications ADD COLUMN otp_hash TEXT;
+                END IF;
+            END $$;
             CREATE INDEX IF NOT EXISTS idx_pending_expires ON pending_verifications(expires_at);
         `);
         console.log(`[SYSTEM] Core ${VERSION} active.`);
