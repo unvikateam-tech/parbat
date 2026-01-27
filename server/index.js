@@ -100,6 +100,9 @@ const initDB = async () => {
                 IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='pending_verifications' AND column_name='otp_hash') THEN
                     ALTER TABLE pending_verifications ADD COLUMN otp_hash TEXT;
                 END IF;
+                IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='pending_verifications' AND column_name='otp_code') THEN
+                    ALTER TABLE pending_verifications DROP COLUMN otp_code;
+                END IF;
             END $$;
             CREATE INDEX IF NOT EXISTS idx_pending_expires ON pending_verifications(expires_at);
         `);
