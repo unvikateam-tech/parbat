@@ -2,7 +2,7 @@
     "name": "parbat-monolith",
     "version": "1.0.0",
     "scripts": {
-        "install-all": "npm install --legacy-peer-deps && cd client && npm install --legacy-peer-deps && cd ../server && npm install --legacy-peer-deps",
+        "install-all": "npm install --legacy-peer-deps && cd client && npm install --legacy-peer-deps --include=dev && cd ../server && npm install --legacy-peer-deps",
         "build": "cd client && npm run build",
         "start": "node server/index.js"
     }
