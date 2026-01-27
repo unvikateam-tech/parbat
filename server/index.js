@@ -275,7 +275,7 @@ app.use(express.static(publicPath, {
     }
 }));
 
-app.get('*', (req, res) => {
+app.get('{*path}', (req, res) => {
     res.sendFile(path.join(publicPath, 'index.html'), (err) => {
         if (err) {
             res.status(404).json({ error: 'Static files not found. Ensure the client is built.' });
