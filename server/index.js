@@ -203,8 +203,10 @@ app.post('/api/subscribe', subscribeLimiter, async (req, res) => {
         res.status(200).json({ message: 'Verification code sent to your email.' });
 
     } catch (error) {
-        console.error('[SUBSCRIBE ERROR]:', error.message);
-        // Do not leak internal error details to the client
+        console.error('[SUBSCRIBE ERROR]:', error);
+        if (error.response) {
+            console.error('[BREVO DETAILS]:', error.response.data);
+        }
         res.status(500).json({ error: 'An error occurred. Please try again later.' });
     }
 });
@@ -257,7 +259,7 @@ app.post('/api/verify', verifyLimiter, async (req, res) => {
 
     } catch (error) {
         await client.query('ROLLBACK');
-        console.error('[VERIFY ERROR]:', error.message);
+        console.error('[VERIFY ERROR]:', error);
         res.status(500).json({ error: 'Verification failed. Please try again.' });
     } finally {
         client.release();
